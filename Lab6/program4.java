@@ -1,38 +1,28 @@
-class BankAccount {
-    private int balance = 1000;
-
-    public synchronized void withdraw(String name, int amount) {
-        if (balance >= amount) {
-            System.out.println(name + " is withdrawing $" + amount);
-            try { Thread.sleep(100); } catch (InterruptedException e) {}
-            balance -= amount;
-            System.out.println(name + " completed withdrawal. Remaining: $" + balance);
-        } else {
-            System.out.println(name + " tried to withdraw $" + amount + " but insufficient funds.");
+class TablePrinter {
+    public synchronized void printTable(int number) {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(number + " x " + i + " = " + (number * i));
+            try { Thread.sleep(50); } catch (InterruptedException e) {}
         }
     }
 }
 
-class WithdrawThread extends Thread {
-    BankAccount account;
-    String name;
-    int amount;
+class TableThread extends Thread {
+    TablePrinter printer;
 
-    WithdrawThread(BankAccount account, String name, int amount) {
-        this.account = account;
-        this.name = name;
-        this.amount = amount;
+    TableThread(TablePrinter printer) {
+        this.printer = printer;
     }
 
     public void run() {
-        account.withdraw(name, amount);
+        printer.printTable(5);
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        BankAccount account = new BankAccount();
-        new WithdrawThread(account, "Alice", 700).start();
-        new WithdrawThread(account, "Bob", 500).start();
+        TablePrinter printer = new TablePrinter();
+        new TableThread(printer).start();
+        new TableThread(printer).start();
     }
 }
